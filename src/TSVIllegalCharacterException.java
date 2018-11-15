@@ -1,11 +1,5 @@
 import java.util.Arrays;
 
-/**
- * Virtual High School
- * 
- * @author type your full name here
- */
-
 public class TSVIllegalCharacterException extends TableWriteException
 {
   private int cellNumber;

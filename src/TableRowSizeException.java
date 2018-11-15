@@ -1,11 +1,6 @@
 import java.util.Arrays;
 import java.util.Arrays;
 
-/**
- * Virtual High School
- * 
- * @author type your full name here
- */
 
 public class TableRowSizeException extends TableReadException
 {

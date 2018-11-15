@@ -1,10 +1,5 @@
 import java.io.IOException;
 
-/**
- * Virtual High School
- * @author type your full name here
- */
-
 public class StrictColumnTableReader implements TableReader
 {
   private TableReader source;
