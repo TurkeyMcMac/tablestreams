@@ -4,10 +4,7 @@ public class Main
 {
   public static void main(String[] args) throws Throwable
   {
-    TableReader tr = new StrictColumnTableReader(new TableFeeder(Arrays.asList(
-      new String[] {"a", "b", "c"},
-      new String[] {"d", "e"}
-    )));
+    TableReader tr = new StrictColumnTableReader(new DSVTableReader(System.in, ','));
     TableWriter tw = new TSVTableWriter(System.out);
     tw.writeTable(tr);
   }

@@ -63,7 +63,7 @@ public class DSVTableReader implements TableReader
           line += "\n" + source.readLine();
         }
       }
-      while (line.charAt(end) != '"' || line.charAt(end - 1) == '\\');
+      while (!hasReachedEnd(line, end, '"'));
       restStart = end;
       do
       {
@@ -73,8 +73,7 @@ public class DSVTableReader implements TableReader
     }
     else
     {
-      while (end < line.length() && (line.charAt(end) != delim
-        || (end > 0 && line.charAt(end - 1) == '\\')))
+      while (!hasReachedEnd(line, end, delim))
       {
         ++end;
       }
@@ -82,6 +81,21 @@ public class DSVTableReader implements TableReader
     }
     cells.add(unescape(line.substring(start, end)));
     return line.substring(restStart);
+  }
+
+  private boolean hasReachedEnd(String line, int index, char stopAt)
+  {
+    if (index >= line.length()) {
+      return true;
+    }
+    if (line.charAt(index) != stopAt) {
+      return false;
+    }
+    int backslashCount = 0;
+    for (int i = index - 1; i >= 0 && line.charAt(i) == '\\'; --i) {
+      ++backslashCount;
+    }
+    return backslashCount % 2 == 0;
   }
 
   private String unescape(String cell)

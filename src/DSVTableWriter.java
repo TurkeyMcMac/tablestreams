@@ -21,7 +21,7 @@ public class DSVTableWriter implements TableWriter
 
   private String deliminate(String cell)
   {
-    return "\"" + cell.replace("\"", "\\\"") + "\"";
+    return "\"" + cell.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
   }
 
   public void writeRow(String... row) throws IOException
