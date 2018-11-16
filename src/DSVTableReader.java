@@ -85,14 +85,17 @@ public class DSVTableReader implements TableReader
 
   private boolean hasReachedEnd(String line, int index, char stopAt)
   {
-    if (index >= line.length()) {
+    if (index >= line.length())
+    {
       return true;
     }
-    if (line.charAt(index) != stopAt) {
+    if (line.charAt(index) != stopAt)
+    {
       return false;
     }
     int backslashCount = 0;
-    for (int i = index - 1; i >= 0 && line.charAt(i) == '\\'; --i) {
+    for (int i = index - 1; i >= 0 && line.charAt(i) == '\\'; --i)
+    {
       ++backslashCount;
     }
     return backslashCount % 2 == 0;
