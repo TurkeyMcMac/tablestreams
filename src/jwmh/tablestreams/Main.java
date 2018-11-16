@@ -1,3 +1,5 @@
+package jwmh.tablestreams;
+
 import java.util.Arrays;
 
 public class Main

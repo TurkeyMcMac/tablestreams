@@ -1,3 +1,5 @@
+package jwmh.tablestreams;
+
 public class TableReadException extends Exception
 {
   public TableReadException(String message) {

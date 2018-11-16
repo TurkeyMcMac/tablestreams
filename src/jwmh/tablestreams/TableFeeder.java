@@ -1,3 +1,5 @@
+package jwmh.tablestreams;
+
 import java.util.List;
 
 public class TableFeeder implements TableReader

@@ -1,3 +1,5 @@
+package jwmh.tablestreams;
+
 import java.io.OutputStream;
 
 public class CSVTableWriter extends DSVTableWriter
