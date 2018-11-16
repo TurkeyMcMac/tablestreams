@@ -31,11 +31,16 @@ public class DSVTableReader implements TableReader
   public String[] readRow() throws IOException
   {
     String line = source.readLine();
+    if (line == null)
+    {
+      return null;
+    }
     ArrayList<String> cells = new ArrayList<>();
-    while (line != null)
+    do
     {
       line = readCell(line, cells);
     }
+    while (line != null);
     return cells.toArray(new String[0]);
   }
 
