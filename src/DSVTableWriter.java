@@ -12,11 +12,13 @@ public class DSVTableWriter implements TableWriter
 
   OutputStream dest;
   char delim;
+  boolean started;
 
   public DSVTableWriter(OutputStream dest, char delim)
   {
     this.dest = dest;
     this.delim = delim;
+    this.started = false;
   }
 
   private String deliminate(String cell)
@@ -26,6 +28,11 @@ public class DSVTableWriter implements TableWriter
 
   public void writeRow(String... row) throws IOException
   {
+    if (started)
+    {
+      dest.write('\n');
+    }
+    started = true;
     if (row.length > 0)
     {
       StringBuffer buf = new StringBuffer(deliminate(row[0]));
@@ -36,7 +43,6 @@ public class DSVTableWriter implements TableWriter
       }
       dest.write(buf.toString().getBytes());
     }
-    dest.write('\n');
   }
 
 }
