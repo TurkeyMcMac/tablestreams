@@ -29,11 +29,10 @@ public class DSVTableReader implements TableReader
   {
     String line = source.readLine();
     ArrayList<String> cells = new ArrayList<>();
-    do
+    while (line != null)
     {
       line = readCell(line, cells);
     }
-    while ((line = readSeparator(line)) != null);
     return cells.toArray(new String[0]);
   }
 
@@ -50,7 +49,7 @@ public class DSVTableReader implements TableReader
     if (end >= line.length())
     {
       cells.add(unescape(line));
-      return "";
+      return null;
     }
     if (line.charAt(end) == '"')
     {
@@ -70,6 +69,7 @@ public class DSVTableReader implements TableReader
         ++restStart;
       }
       while (restStart < line.length() && line.charAt(restStart) != delim);
+      ++restStart;
     }
     else
     {
@@ -77,10 +77,10 @@ public class DSVTableReader implements TableReader
       {
         ++end;
       }
-      restStart = end;
+      restStart = end + 1;
     }
     cells.add(unescape(line.substring(start, end)));
-    return line.substring(restStart);
+    return restStart < line.length() ? line.substring(restStart) : null;
   }
 
   private boolean hasReachedEnd(String line, int index, char stopAt)
@@ -102,15 +102,6 @@ public class DSVTableReader implements TableReader
   {
     return cell.replace("\\" + delim, Character.toString(delim))
       .replace("\\\"", "\"").replace("\\\\", "\\");
-  }
-
-  private String readSeparator(String line)
-  {
-    if (line.length() > 0 && line.charAt(0) == delim)
-    {
-      return line.substring(1);
-    }
-    return null;
   }
 
 }
