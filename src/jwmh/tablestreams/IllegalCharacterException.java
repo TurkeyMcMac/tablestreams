@@ -2,18 +2,18 @@ package jwmh.tablestreams;
 
 import java.util.Arrays;
 
-public class TSVIllegalCharacterException extends TableWriteException
+public class IllegalCharacterException extends TableWriteException
 {
   private int cellNumber;
   private int index;
   private String[] cells;
 
-  public TSVIllegalCharacterException()
+  public IllegalCharacterException()
   {
     super();
   }
 
-  TSVIllegalCharacterException(int cellNumber, int index, String... cells)
+  IllegalCharacterException(int cellNumber, int index, String... cells)
   {
     super();
     this.cellNumber = cellNumber;
@@ -26,7 +26,7 @@ public class TSVIllegalCharacterException extends TableWriteException
   {
     return "The character at index " + index + " in cell " + cellNumber
       + " in the row " + Arrays.toString(cells)
-      + " is forbidden by the TSV standard";
+      + " is forbidden by in this table format";
   }
 
   public int getCellNumber()

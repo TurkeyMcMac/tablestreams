@@ -5,21 +5,22 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 
-public class TSVTableWriter extends NoEscapeDSVTableWriter
+public class ASCIITableWriter extends NoEscapeDSVTableWriter
 {
-  public TSVTableWriter(OutputStream dest)
+  public ASCIITableWriter(OutputStream dest)
   {
     super(dest);
   }
 
   protected char getCellDelimiter()
   {
-    return '\t';
+    return '\u001F';
   }
 
   protected char getRowDelimiter()
   {
-    return '\n';
+    return '\u001E';
   }
 
 }
+ 
