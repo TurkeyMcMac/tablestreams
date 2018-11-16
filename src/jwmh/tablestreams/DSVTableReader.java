@@ -28,7 +28,7 @@ public class DSVTableReader implements TableReader
     this.delim = delim;
   }
 
-  public String[] readRow() throws IOException
+  public String[] readRow() throws IOException, TableReadException
   {
     String line = source.readLine();
     if (line == null)
@@ -45,7 +45,7 @@ public class DSVTableReader implements TableReader
   }
 
   private String readCell(String line, ArrayList<String> cells)
-    throws IOException
+    throws IOException, TableReadException
   {
     int start = 0, end = 0, restStart;
 
@@ -66,7 +66,11 @@ public class DSVTableReader implements TableReader
         ++end;
         if (end >= line.length())
         {
-          line += "\n" + source.readLine();
+          String nextLine = source.readLine();
+          if (nextLine == null) {
+            throw new UnclosedQuoteException(line.substring(start));
+          }
+          line += "\n" + nextLine;
         }
       }
       while (!hasReachedEnd(line, end, '"'));

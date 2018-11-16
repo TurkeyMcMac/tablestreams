@@ -29,17 +29,30 @@ class DSVTableReaderTest
   }
 
   @Test
+  void missingClosingQuote() throws Exception
+  {
+    try
+    {
+      assertOutput("\"foo\n\n", "\"foo\n\n");
+      fail("Missing closing quotes are supposed to cause exceptions.");
+    }
+    catch (UnclosedQuoteException e)
+    {
+    }
+  }
+
+  @Test
   void completelyEmpty() throws Exception
   {
     assertOutput("", "");
   }
-  
+
   @Test
   void emptyCells() throws Exception
   {
     assertOutput(",\"\",\n,\"\" ", "\"\":\"\":\"\"\n\"\":\"\"");
   }
-  
+
   @Test
   void whitespace() throws Exception
   {
