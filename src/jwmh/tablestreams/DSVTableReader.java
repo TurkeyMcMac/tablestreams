@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 
 public class DSVTableReader implements TableReader
@@ -16,7 +17,7 @@ public class DSVTableReader implements TableReader
     this(new InputStreamReader(source), delim);
   }
 
-  public DSVTableReader(InputStreamReader source, char delim)
+  public DSVTableReader(Reader source, char delim)
   {
     this(new BufferedReader(source), delim);
   }

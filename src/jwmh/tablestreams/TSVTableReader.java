@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Iterator;
 
 public class TSVTableReader implements TableReader
@@ -16,7 +17,7 @@ public class TSVTableReader implements TableReader
     this.source = new BufferedReader(new InputStreamReader(source));
   }
 
-  public TSVTableReader(InputStreamReader source)
+  public TSVTableReader(Reader source)
   {
     this.source = new BufferedReader(source);
   }
