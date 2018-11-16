@@ -5,12 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 
-/**
- * Virtual High School
- * 
- * @author type your full name here
- */
-
 public class TSVTableReader implements TableReader
 {
   BufferedReader source;

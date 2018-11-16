@@ -3,12 +3,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 
-/**
- * Virtual High School
- * 
- * @author type your full name here
- */
-
 public class TSVTableWriter implements TableWriter
 {
   OutputStream dest;

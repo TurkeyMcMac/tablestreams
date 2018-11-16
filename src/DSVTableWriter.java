@@ -1,12 +1,6 @@
 import java.io.IOException;
 import java.io.OutputStream;
 
-/**
- * Virtual High School
- * 
- * @author type your full name here
- */
-
 public class DSVTableWriter implements TableWriter
 {
 

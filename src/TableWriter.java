@@ -1,10 +1,5 @@
 import java.io.IOException;
 
-/**
- * Virtual High School
- * @author type your full name here
- */
-
 public interface TableWriter
 {
   public void writeRow(String... row) throws IOException, TableWriteException;
