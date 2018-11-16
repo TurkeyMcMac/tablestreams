@@ -10,17 +10,16 @@ import jwmh.tablestreams.*;
 class TSVTableReaderTest
 {
 
-
   @Test
   void trailingLine() throws Exception
   {
-    assertOutput("a\tb\tc\nd\te\tf\n","\"a\":\"b\":\"c\"\n\"d\":\"e\":\"f\"");
+    assertOutput("a\tb\tc\nd\te\tf\n", "\"a\":\"b\":\"c\"\n\"d\":\"e\":\"f\"");
   }
-  
+
   @Test
   void noTrailingLine() throws Exception
   {
-    assertOutput("a\tb\tc\nd\te\tf","\"a\":\"b\":\"c\"\n\"d\":\"e\":\"f\"");
+    assertOutput("a\tb\tc\nd\te\tf", "\"a\":\"b\":\"c\"\n\"d\":\"e\":\"f\"");
   }
 
   void assertOutput(String input, String output) throws Exception
