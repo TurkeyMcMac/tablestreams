@@ -9,17 +9,16 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-public class ASCIITableReader implements TableReader
+public class ASCIITableReader extends NoEscapeDSVTableReader
 {
   private static final Pattern ROW_DELIMITER = Pattern.compile("\u001E");
   private static final Pattern CELL_DELIMITER = Pattern.compile("\u001F");
-
-  private Scanner source;
 
   public ASCIITableReader(InputStream source)
   {
     this(new InputStreamReader(source));
   }
+
   public ASCIITableReader(BufferedReader source)
   {
     this(new Scanner(source));
@@ -32,20 +31,16 @@ public class ASCIITableReader implements TableReader
 
   public ASCIITableReader(Scanner source)
   {
-    this.source = source;
-    this.source.useDelimiter(ROW_DELIMITER);
+    super(source);
   }
 
-  public String[] readRow() throws IOException
+  protected Pattern getCellDelimiterPattern()
   {
-    try
-    {
-      String nextLine = source.next();
-      return CELL_DELIMITER.split(nextLine);
-    }
-    catch (NoSuchElementException e)
-    {
-      return null;
-    }
+    return CELL_DELIMITER;
+  }
+
+  protected Pattern getRowDelimiterPattern()
+  {
+    return ROW_DELIMITER;
   }
 }

@@ -1,40 +1,46 @@
 package jwmh.tablestreams;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
-public class TSVTableReader implements TableReader
+public class TSVTableReader extends NoEscapeDSVTableReader
 {
-  BufferedReader source;
+  private static final Pattern ROW_DELIMITER = Pattern.compile("\n");
+  private static final Pattern CELL_DELIMITER = Pattern.compile("\t");
 
   public TSVTableReader(InputStream source)
   {
-    this.source = new BufferedReader(new InputStreamReader(source));
-  }
-
-  public TSVTableReader(Reader source)
-  {
-    this.source = new BufferedReader(source);
+    this(new InputStreamReader(source));
   }
 
   public TSVTableReader(BufferedReader source)
   {
-    this.source = source;
+    this(new Scanner(source));
   }
 
-  public String[] readRow() throws IOException
+  public TSVTableReader(Reader source)
   {
-    String nextLine = source.readLine();
-    if (nextLine != null)
-    {
-      return nextLine.split("\t");
-    }
-    return null;
+    this(new BufferedReader(source));
   }
 
+  public TSVTableReader(Scanner source)
+  {
+    super(source);
+  }
+
+  protected Pattern getCellDelimiterPattern()
+  {
+    return CELL_DELIMITER;
+  }
+
+  protected Pattern getRowDelimiterPattern()
+  {
+    return ROW_DELIMITER;
+  }
 }
