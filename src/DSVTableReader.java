@@ -41,14 +41,13 @@ public class DSVTableReader implements TableReader
   {
     int start = 0, end = 0, restStart;
 
-    while (end < line.length()
-      && (line.charAt(end) == ' ' || line.charAt(end) == '\t'))
+    while (end < line.length() && line.charAt(end) == ' ')
     {
       ++end;
     }
     if (end >= line.length())
     {
-      cells.add(unescape(line));
+      cells.add(line);
       return null;
     }
     if (line.charAt(end) == '"')
@@ -80,7 +79,7 @@ public class DSVTableReader implements TableReader
       restStart = end + 1;
     }
     cells.add(unescape(line.substring(start, end)));
-    return restStart < line.length() ? line.substring(restStart) : null;
+    return restStart <= line.length() ? line.substring(restStart) : null;
   }
 
   private boolean hasReachedEnd(String line, int index, char stopAt)
