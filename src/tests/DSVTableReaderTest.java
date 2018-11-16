@@ -48,11 +48,11 @@ class DSVTableReaderTest
 
   private void assertOutput(String input, String output) throws Exception
   {
-
     StringReader source = new StringReader(input);
     TableReader reader = new DSVTableReader(source, ',');
     OutputStreamSimulator dest = new OutputStreamSimulator(output);
     TableWriter writer = new DSVTableWriter(dest, ':');
     writer.writeTable(reader);
+    dest.close();
   }
 }

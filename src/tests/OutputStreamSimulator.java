@@ -1,12 +1,13 @@
 package tests;
 
+import java.io.Closeable;
 import java.io.OutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-class OutputStreamSimulator extends OutputStream
+class OutputStreamSimulator extends OutputStream implements Closeable
 {
   String expected;
 
@@ -37,6 +38,12 @@ class OutputStreamSimulator extends OutputStream
       fail("Unexpected written text: " + ch);
     }
     expected = expected.substring(1);
+  }
+
+  public void close() {
+    if (!expected.isEmpty()) {
+      fail("Less was written than was expected. This was left: " + expected);
+    }
   }
 
 }
