@@ -5,6 +5,11 @@
 
 package jwmh.tablestreams;
 
+/**
+ * An exception thrown when a DSV file has an unclosed quote (").
+ * 
+ * @author Jude Melton-Houghton
+ */
 public class UnclosedQuoteException extends TableReadException
 {
 
@@ -22,6 +27,10 @@ public class UnclosedQuoteException extends TableReadException
     return "The quoted section '" + quoted + "' is never closed.";
   }
 
+  /**
+   * Get the unclosed quoted section.
+   * @return the quoted section
+   */
   public String getQuoted()
   {
     return quoted;

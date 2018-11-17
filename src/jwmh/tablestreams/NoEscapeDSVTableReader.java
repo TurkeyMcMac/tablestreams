@@ -9,6 +9,14 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+/**
+ * The parent class of readers of delimited value formats which disallow
+ * escaping, namely TSV and the one which uses built-in ASCII delimiter
+ * characters.
+ * 
+ * @author Jude Melton-Houghton
+ * @see NoEscapeDSVTableWriter
+ */
 public abstract class NoEscapeDSVTableReader implements TableReader
 {
   protected Scanner source;
@@ -31,8 +39,8 @@ public abstract class NoEscapeDSVTableReader implements TableReader
       return null;
     }
   }
-  
+
   protected abstract Pattern getCellDelimiterPattern();
+
   protected abstract Pattern getRowDelimiterPattern();
 }
- 

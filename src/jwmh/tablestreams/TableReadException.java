@@ -1,8 +1,20 @@
 package jwmh.tablestreams;
 
+/**
+ * Any table parsing error. This exists for the purpose of exception catching
+ * specificity.
+ * 
+ * @author Jude Melton-Houghton
+ * @see TableReader#readRow()
+ */
 public class TableReadException extends Exception
 {
-  public TableReadException(String message) {
+  /**
+   * Instantiate with an error message.
+   * @param message the message string
+   */
+  public TableReadException(String message)
+  {
     super(message);
   }
 
@@ -11,4 +23,3 @@ public class TableReadException extends Exception
     super();
   }
 }
- 

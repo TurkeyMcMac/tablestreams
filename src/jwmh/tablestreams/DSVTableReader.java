@@ -7,21 +7,53 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 
+/**
+ * A reader of Delimiter-Separated Values.
+ * 
+ * @author Jude Melton-Houghton
+ * @see DSVTableWriter
+ * @see <a href="https://tools.ietf.org/html/rfc4180">The CSV specification</a>
+ *      (DSV where the delimiter is ',')
+ */
 public class DSVTableReader implements TableReader
 {
   private BufferedReader source;
   private char delim;
 
+  /**
+   * Instantiate from an input stream.
+   * 
+   * @param source
+   *          the input stream
+   * @param delim
+   *          the delimiter
+   */
   public DSVTableReader(InputStream source, char delim)
   {
     this(new InputStreamReader(source), delim);
   }
 
+  /**
+   * Instantiate from a reader.
+   * 
+   * @param source
+   *          the reader
+   * @param delim
+   *          the delimiter
+   */
   public DSVTableReader(Reader source, char delim)
   {
     this(new BufferedReader(source), delim);
   }
 
+  /**
+   * Instantiate from a buffered reader.
+   * 
+   * @param source
+   *          the reader
+   * @param delim
+   *          the delimiter
+   */
   public DSVTableReader(BufferedReader source, char delim)
   {
     this.source = source;
@@ -67,7 +99,8 @@ public class DSVTableReader implements TableReader
         if (end >= line.length())
         {
           String nextLine = source.readLine();
-          if (nextLine == null) {
+          if (nextLine == null)
+          {
             throw new UnclosedQuoteException(line.substring(start));
           }
           line += "\n" + nextLine;

@@ -5,11 +5,25 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 
+/**
+ * The parent class of writer of delimited value formats which disallow
+ * escaping, namely TSV and the one which uses built-in ASCII delimiter
+ * characters.
+ * 
+ * @author Jude Melton-Houghton
+ * @see NoEscapeDSVTableReader
+ */
 public abstract class NoEscapeDSVTableWriter implements TableWriter
 {
   OutputStream dest;
   boolean started;
 
+  /**
+   * Construct a writer to a destination.
+   * 
+   * @param dest
+   *          The file or other place to write information to.
+   */
   public NoEscapeDSVTableWriter(OutputStream dest)
   {
     this.dest = dest;
@@ -38,8 +52,18 @@ public abstract class NoEscapeDSVTableWriter implements TableWriter
       String.join(Character.toString(getCellDelimiter()), cells).getBytes());
   }
 
+  /**
+   * Get the character between cells.
+   * 
+   * @return the cell delimiter.
+   */
   protected abstract char getCellDelimiter();
 
+  /**
+   * Get the character between rows.
+   * 
+   * @return the row delimiter.
+   */
   protected abstract char getRowDelimiter();
 
 }

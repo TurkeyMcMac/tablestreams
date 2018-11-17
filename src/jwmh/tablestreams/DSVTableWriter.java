@@ -3,6 +3,14 @@ package jwmh.tablestreams;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * A writer of Delimiter-Separated Values.
+ * 
+ * @author Jude Melton-Houghton
+ * @see DSVTableReader
+ * @see <a href="https://tools.ietf.org/html/rfc4180">The CSV specification</a>
+ *      (DSV where the delimiter is ',')
+ */
 public class DSVTableWriter implements TableWriter
 {
 
@@ -10,6 +18,14 @@ public class DSVTableWriter implements TableWriter
   char delim;
   boolean started;
 
+  /**
+   * Instantiate from an output stream as a destination.
+   * 
+   * @param dest
+   *          the output stream
+   * @param delim
+   *          the delimiter
+   */
   public DSVTableWriter(OutputStream dest, char delim)
   {
     this.dest = dest;
