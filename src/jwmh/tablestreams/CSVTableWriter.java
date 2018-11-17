@@ -7,6 +7,7 @@ import java.io.OutputStream;
  * 
  * @author Jude Melton-Houghton
  * @see <a href="https://tools.ietf.org/html/rfc4180">The CSV specification</a>
+ * @see CSVTableReader
  */
 public class CSVTableWriter extends DSVTableWriter
 {
