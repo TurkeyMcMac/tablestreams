@@ -103,17 +103,19 @@ public class XLSXWorkbook
       rows = null;
     }
 
-    public TableReader getTable(XLSXWorkbook context) throws IOException, ParserConfigurationException, SAXException
+    public TableReader getTable(XLSXWorkbook context)
+      throws IOException, ParserConfigurationException, SAXException
     {
       if (rows == null)
       {
-      rows = parseTable(context.archive.getInputStream(entry), context);
+        rows = parseTable(context.archive.getInputStream(entry), context);
       }
       return new TableFeeder(rows);
     }
 
     private static List<String[]> parseTable(InputStream input,
-      XLSXWorkbook context) throws ParserConfigurationException, SAXException, IOException
+      XLSXWorkbook context)
+      throws ParserConfigurationException, SAXException, IOException
     {
       NodeList rows = null;
       Document doc = null;
@@ -135,8 +137,7 @@ public class XLSXWorkbook
       {
         rows = sheetData.getChildNodes();
       }
-      /*
-      int width = 0, height = 0;
+      int width = 0;
       dimension = doc.getElementsByTagName("dimension").item(0);
       if (dimension != null)
       {
@@ -147,28 +148,31 @@ public class XLSXWorkbook
           if (dimensions.size() >= 2)
           {
             width = dimensions.get(1)[1] - dimensions.get(0)[1];
-            height = dimensions.get(1)[0] - dimensions.get(0)[0];
-            if (width > 0) {
+            if (width > 0)
+            {
               width += 1;
             }
           }
         }
       }
-      */
       List<String[]> parsedRows = new ArrayList<String[]>();
       int i = 0;
       String[] row;
-      while ((row = parseRow(rows, context.sharedStrings, 10, i++)) != null) {
+      while ((row = parseRow(rows, context.sharedStrings, width, i++)) != null)
+      {
         parsedRows.add(row);
       }
       return parsedRows;
     }
-    
-    private static String[] parseRow(NodeList rows, List<String> sharedStrings, int width, int index) {
+
+    private static String[] parseRow(NodeList rows, List<String> sharedStrings,
+      int width, int index)
+    {
       List<String> parsedRow;
       String[] rowArray;
       Node row = rows.item(index);
-      if (row == null) {
+      if (row == null)
+      {
         return null;
       }
       NodeList cells = row.getChildNodes();
@@ -184,9 +188,12 @@ public class XLSXWorkbook
             String rawValue = value.getTextContent();
             String realValue;
             Node type = cell.getAttributes().getNamedItem("t");
-            if (type != null && type.getNodeValue().equals("s")) {
+            if (type != null && type.getNodeValue().equals("s"))
+            {
               realValue = sharedStrings.get(Integer.parseInt(rawValue));
-            } else {
+            }
+            else
+            {
               realValue = rawValue;
             }
             parsedRow.add(realValue);
@@ -196,9 +203,51 @@ public class XLSXWorkbook
       rowArray = new String[parsedRow.size()];
       return parsedRow.toArray(rowArray);
     }
+
+    private static List<int[]> parseDimensions(String dimension)
+    {
+      List<int[]> dims = new ArrayList<int[]>(2);
+      String[] dimensions = dimension.split(":");
+      for (int i = 0; i < Math.min(dimensions.length, 2); ++i)
+      {
+        dims.add(parseLocation(dimensions[i]));
+      }
+      return dims;
+    }
+
+    private static int[] parseLocation(String string)
+    {
+      int column = 0, row = 0;
+      char nextChar;
+      int i;
+      for (i = 0; i < string.length(); ++i)
+      {
+        nextChar = string.charAt(i);
+        if (Character.isAlphabetic(nextChar))
+        {
+          column += Character.toLowerCase(nextChar) - 'a' + 1;
+        }
+        else
+        {
+          break;
+        }
+      }
+      for (; i < string.length(); ++i)
+      {
+        nextChar = string.charAt(i);
+        if (Character.isDigit(nextChar))
+        {
+          row *= 10;
+          row += nextChar - '0';
+        }
+      }
+      int[] rowColumn = {row, column};
+      return rowColumn;
+    }
   }
 
-  public TableReader getTable(String name) throws IOException, ParserConfigurationException, SAXException
+  public TableReader getTable(String name)
+    throws IOException, ParserConfigurationException, SAXException
   {
     Spreadsheet sheet = sheets.get(name);
     if (sheet != null)
