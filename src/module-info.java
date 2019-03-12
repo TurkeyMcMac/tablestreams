@@ -11,4 +11,5 @@ module jwmh.tablestreams
   exports jwmh.tablestreams;
 
   requires org.junit.jupiter.api;
+  requires java.xml;
 }
