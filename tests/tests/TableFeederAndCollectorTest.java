@@ -3,6 +3,7 @@ package tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -22,9 +23,17 @@ class TableFeederAndCollectorTest
     TableFeeder reader = new TableFeeder(original);
     TableCollector writer = new TableCollector();
     writer.writeTable(reader);
-    if (!writer.getList().equals(original))
+    List<String[]> writtenList = writer.getList();
+    if (original.size() != writtenList.size())
     {
       fail("Copying was inaccurate.");
+    }
+    for (int i = 0; i < original.size(); ++i)
+    {
+      if (!Arrays.deepEquals(original.get(i), writtenList.get(i)))
+      {
+        fail("Copying was inaccurate.");
+      }
     }
   }
 
