@@ -16,17 +16,6 @@ public class ASCIITableWriter extends NoEscapeDSVTableWriter
 {
   public ASCIITableWriter(OutputStream dest)
   {
-    super(dest);
+    super(dest, '\u001F', '\u001E');
   }
-
-  protected char getCellDelimiter()
-  {
-    return '\u001F';
-  }
-
-  protected char getRowDelimiter()
-  {
-    return '\u001E';
-  }
-
 }

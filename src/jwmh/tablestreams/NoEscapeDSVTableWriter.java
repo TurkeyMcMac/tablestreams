@@ -13,21 +13,28 @@ import java.io.PrintStream;
  * @author Jude Melton-Houghton
  * @see NoEscapeDSVTableReader
  */
-public abstract class NoEscapeDSVTableWriter implements TableWriter
+public class NoEscapeDSVTableWriter implements TableWriter
 {
-  OutputStream dest;
-  boolean started;
+  private OutputStream dest;
+  private boolean started;
+  private char cellDelim, rowDelim;
 
   /**
    * Construct a writer to a destination.
    * 
    * @param dest
    *          The file or other place to write information to.
+   * @param cellDelim
+   *          the cell delimiter character (a tab for TSV)
+   * @param rowDelim
+   *          the row delimiter character (a newline for TSV)
    */
-  public NoEscapeDSVTableWriter(OutputStream dest)
+  public NoEscapeDSVTableWriter(OutputStream dest, char cellDelim, char rowDelim)
   {
     this.dest = dest;
     this.started = false;
+    this.cellDelim = cellDelim;
+    this.rowDelim = rowDelim;
   }
 
   public void writeRow(String... cells) throws IOException, TableWriteException
@@ -37,33 +44,19 @@ public abstract class NoEscapeDSVTableWriter implements TableWriter
     {
       String cell = cells[i];
       int index;
-      if ((index = cell.indexOf(getCellDelimiter())) >= 0
-        || (index = cell.indexOf(getRowDelimiter())) >= 0)
+      if ((index = cell.indexOf(cellDelim)) >= 0
+        || (index = cell.indexOf(rowDelim)) >= 0)
       {
         throw new IllegalCharacterException(i, index, cells);
       }
     }
     if (started)
     {
-      dest.write(getRowDelimiter());
+      dest.write(rowDelim);
     }
     started = true;
     dest.write(
-      String.join(Character.toString(getCellDelimiter()), cells).getBytes());
+      String.join(Character.toString(cellDelim), cells).getBytes());
   }
-
-  /**
-   * Get the character between cells.
-   * 
-   * @return the cell delimiter.
-   */
-  protected abstract char getCellDelimiter();
-
-  /**
-   * Get the character between rows.
-   * 
-   * @return the row delimiter.
-   */
-  protected abstract char getRowDelimiter();
 
 }

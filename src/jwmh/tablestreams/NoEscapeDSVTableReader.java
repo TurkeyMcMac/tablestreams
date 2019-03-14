@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 /**
  * The parent class of readers of delimited value formats which disallow
@@ -17,14 +16,26 @@ import java.util.regex.Pattern;
  * @author Jude Melton-Houghton
  * @see NoEscapeDSVTableWriter
  */
-public abstract class NoEscapeDSVTableReader implements TableReader
+public class NoEscapeDSVTableReader implements TableReader
 {
-  protected Scanner source;
+  private Scanner source;
+  private String cellDelim;
 
-  public NoEscapeDSVTableReader(Scanner source)
+  /**
+   * Instantiate a new reader from the source.
+   * 
+   * @param source
+   *          the source from which to read
+   * @param cellDelim
+   *          the cell delimiter character (a tab for TSV)
+   * @param rowDelim
+   *          the row delimiter character (a newline for TSV)
+   */
+  public NoEscapeDSVTableReader(Scanner source, char cellDelim, char rowDelim)
   {
     this.source = source;
-    this.source.useDelimiter(getRowDelimiterPattern());
+    this.source.useDelimiter(Character.toString(rowDelim));
+    this.cellDelim = Character.toString(cellDelim);
   }
 
   public String[] readRow() throws IOException
@@ -32,7 +43,7 @@ public abstract class NoEscapeDSVTableReader implements TableReader
     try
     {
       String nextLine = source.next();
-      return getCellDelimiterPattern().split(nextLine);
+      return nextLine.split(cellDelim);
     }
     catch (NoSuchElementException e)
     {
@@ -40,7 +51,4 @@ public abstract class NoEscapeDSVTableReader implements TableReader
     }
   }
 
-  protected abstract Pattern getCellDelimiterPattern();
-
-  protected abstract Pattern getRowDelimiterPattern();
 }
