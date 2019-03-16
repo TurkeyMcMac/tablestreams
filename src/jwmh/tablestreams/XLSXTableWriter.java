@@ -23,7 +23,6 @@ public class XLSXTableWriter implements TableWriter, Closeable
   public XLSXTableWriter(ZipOutputStream out)
   {
     output = out;
-    rowNum = 1;
     sheetNames = new ArrayList<String>();
     writingTable = false;
   }
@@ -45,24 +44,34 @@ public class XLSXTableWriter implements TableWriter, Closeable
     }
   }
 
+  private static void appendHeader(StringBuilder to)
+  {
+    to.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+  }
+
   public void beginTable(String name) throws IOException
   {
+    StringBuilder print = new StringBuilder();
+    if (writingTable)
+    {
+      finishWriting();
+    }
+    rowNum = 1;
     sheetNames.add(name);
     output.putNextEntry(
       new ZipEntry("xl/worksheets/sheet" + sheetNames.size() + ".xml"));
-    output
-      .write(("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-        + "<worksheet"
-        + " xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\""
-        + " xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\""
-        + " xmlns:mx=\"http://schemas.microsoft.com/office/mac/excel/2008/main\""
-        + " xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\""
-        + " xmlns:mv=\"urn:schemas-microsoft-com:mac:vml\""
-        + " xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\""
-        + " xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\""
-        + " xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\">"
-        + "<sheetViews></sheetViews>" + "<sheetFormatPr/>" + "<sheetData>")
-          .getBytes());
+    appendHeader(print);
+    print.append("<worksheet"
+      + " xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\""
+      + " xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\""
+      + " xmlns:mx=\"http://schemas.microsoft.com/office/mac/excel/2008/main\""
+      + " xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\""
+      + " xmlns:mv=\"urn:schemas-microsoft-com:mac:vml\""
+      + " xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\""
+      + " xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\""
+      + " xmlns:xm=\"http://schemas.microsoft.com/office/excel/2006/main\">"
+      + "<sheetViews></sheetViews>" + "<sheetFormatPr/>" + "<sheetData>");
+    output.write(print.toString().getBytes());
     writingTable = true;
   }
 
@@ -95,16 +104,12 @@ public class XLSXTableWriter implements TableWriter, Closeable
     writingTable = false;
   }
 
-  public void close() throws IOException
+  private void putWorkbook() throws IOException
   {
     StringBuilder print = new StringBuilder();
-    if (writingTable)
-    {
-      finishWriting();
-    }
     output.putNextEntry(new ZipEntry("xl/workbook.xml"));
-    print.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-      + "<workbook"
+    appendHeader(print);
+    print.append("<workbook"
       + " xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\""
       + " xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\""
       + " xmlns:mx=\"http://schemas.microsoft.com/office/mac/excel/2008/main\""
@@ -127,41 +132,78 @@ public class XLSXTableWriter implements TableWriter, Closeable
     print.append("</sheets><definedNames/><calcPr/></workbook>");
     output.write(print.toString().getBytes());
     output.closeEntry();
-    
+  }
+
+  private void putWorkbookRels() throws IOException
+  {
+    StringBuilder print = new StringBuilder();
     output.putNextEntry(new ZipEntry("xl/_rels/workbook.xml.rels"));
-    print.setLength(0);
-    print.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">"
-      + "<Relationship Id=\"rId3\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet1.xml\"/></Relationships>");
-    output.write(print.toString().getBytes());
-    output.closeEntry();
-    
-    //
-    // output.putNextEntry(new ZipEntry("xl/styles.xml"));
-    // print.setLength(0);
-    // print.append("<?xml version=\"1.0\" encoding=\"UTF-8\"
-    // standalone=\"yes\"?><Relationships></Relationships>");
-    // output.write(print.toString().getBytes());
-    // output.closeEntry();
-
-    output.putNextEntry(new ZipEntry("_rels/.rels"));
-    print.setLength(0);
+    appendHeader(print);
     print.append(
-      "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\" Target=\"xl/workbook.xml\"/></Relationships>");
+      "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">");
+    for (int i = 0; i < sheetNames.size(); ++i)
+    {
+      print.append("<Relationship Id=\"rId");
+      print.append(i + 3);
+      print.append("\""
+        + " Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\""
+        + " Target=\"worksheets/sheet");
+      print.append(i + 1);
+      print.append(".xml\"/>");
+    }
+    print.append("</Relationships>");
     output.write(print.toString().getBytes());
     output.closeEntry();
+  }
 
+  private void putRels() throws IOException
+  {
+
+    StringBuilder print = new StringBuilder();
+    output.putNextEntry(new ZipEntry("_rels/.rels"));
+    appendHeader(print);
+    print.append(
+      "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">"
+        + "<Relationship Id=\"rId1\""
+        + " Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\""
+        + " Target=\"xl/workbook.xml\"/>" + "</Relationships>");
+    output.write(print.toString().getBytes());
+    output.closeEntry();
+  }
+
+  private void putContentTypes() throws IOException
+  {
+    StringBuilder print = new StringBuilder();
     output.putNextEntry(new ZipEntry("[Content_Types].xml"));
-    print.setLength(0);
-    print.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-      + "<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">"
-      + "<Default ContentType=\"application/xml\" Extension=\"xml\"/>"
-      + "<Default ContentType=\"application/vnd.openxmlformats-package.relationships+xml\" Extension=\"rels\"/>"
-      + "<Override ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\" PartName=\"/xl/worksheets/sheet1.xml\"/>"
-      + "<Override ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml\" PartName=\"/xl/workbook.xml\"/>"
-      + "</Types>");
+    appendHeader(print);
+    print.append(
+      "<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">"
+        + "<Default ContentType=\"application/xml\" Extension=\"xml\"/>"
+        + "<Default ContentType=\"application/vnd.openxmlformats-package.relationships+xml\" Extension=\"rels\"/>"
+        + "<Override ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml\" PartName=\"/xl/workbook.xml\"/>");
+    for (int i = 0; i < sheetNames.size(); ++i)
+    {
+      print.append("<Override"
+        + " ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\""
+        + " PartName=\"/xl/worksheets/sheet");
+      print.append(i + 1);
+      print.append(".xml\"/>");
+    }
+    print.append("</Types>");
     output.write(print.toString().getBytes());
     output.closeEntry();
+  }
 
+  public void close() throws IOException
+  {
+    if (writingTable)
+    {
+      finishWriting();
+    }
+    putWorkbook();
+    putWorkbookRels();
+    putRels();
+    putContentTypes();
     output.close();
   }
 
