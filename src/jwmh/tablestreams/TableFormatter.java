@@ -31,8 +31,13 @@ import java.util.List;
  * <p>
  * Unlike most table writers, TableFormatter does not automatically write its
  * output to a file, since it must consider every line at once before doing any
- * printing. To print it to a file, use its {@link #toString()} function, which
- * does the formatting.
+ * printing. To print it to a file, you have two options:
+ * <ul>
+ * <li>Use the constructor {@link #TableFormatter(OutputStream)} and call
+ * {@link #finishWriting()} upon completion.</li>
+ * <li>Call {@link #toString()} upon completion of the table and print the
+ * result to an output stream</li>
+ * </ul>
  * </p>
  * 
  * @author Jude Melton-Houghton
@@ -40,6 +45,7 @@ import java.util.List;
  */
 public class TableFormatter implements TableWriter
 {
+  private OutputStream output;
   private List<String[]> rows;
   private List<Integer> widths;
   private String colSepLeft, colSep, colSepRight;
@@ -50,9 +56,14 @@ public class TableFormatter implements TableWriter
   /**
    * Construct a new formatter with the default format settings. These can be
    * changed later using setters.
+   * 
+   * @param out
+   *          the place to write the table when {@link #finishWriting()} is
+   *          called
    */
-  public TableFormatter()
+  public TableFormatter(OutputStream out)
   {
+    output = out;
     horizSep = '-';
     intersectionLeft = "+-";
     intersection = "-+-";
@@ -63,6 +74,16 @@ public class TableFormatter implements TableWriter
     rows = new ArrayList<String[]>();
     widths = new ArrayList<Integer>();
     separateHeader = true;
+  }
+
+  /**
+   * Construct a new formatter with the default format settings. These can be
+   * changed later using setters. Nothing will be automatically printed when
+   * {@link #finishWriting()} is called.
+   */
+  public TableFormatter()
+  {
+    this(null);
   }
 
   /**
@@ -312,4 +333,17 @@ public class TableFormatter implements TableWriter
     return printed.toString();
   }
 
+  /**
+   * Print the string representation to the output if an output was given.
+   * 
+   * @throws IOException
+   *           if a write error occurred
+   */
+  public void finishWriting() throws IOException
+  {
+    if (output != null)
+    {
+      output.write(toString().getBytes());
+    }
+  }
 }
