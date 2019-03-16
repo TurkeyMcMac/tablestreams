@@ -44,6 +44,32 @@ public class XLSXTableWriter implements TableWriter, Closeable
     }
   }
 
+  private static String escape(char original)
+  {
+    switch (original)
+    {
+      case '<':
+        return "&lt;";
+      case '>':
+        return "&gt;";
+      case '"':
+        return "&quot;";
+      case '\'':
+        return "&apos;";
+      case '&':
+        return "&amp;";
+      default:
+        return Character.toString(original);
+    }
+  }
+  
+  private static void appendEscaped(StringBuilder to, String original)
+  {
+    for (int i = 0; i < original.length(); ++i) {
+      to.append(escape(original.charAt(i)));
+    }
+  }
+
   private static void appendHeader(StringBuilder to)
   {
     to.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
@@ -86,7 +112,7 @@ public class XLSXTableWriter implements TableWriter, Closeable
       ++colNum;
       print.append(rowNum);
       print.append("\"><v>");
-      print.append(cell);
+      appendEscaped(print, cell);
       print.append("</v></c>");
     }
     print.append("</row>");
@@ -122,7 +148,7 @@ public class XLSXTableWriter implements TableWriter, Closeable
     for (int i = 0; i < sheetNames.size(); ++i)
     {
       print.append("<sheet state=\"visible\" name=\"");
-      print.append(sheetNames.get(i));
+      appendEscaped(print, sheetNames.get(i));
       print.append("\" sheetId=\"");
       print.append(i + 1);
       print.append("\" r:id=\"rId");
