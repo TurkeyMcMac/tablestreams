@@ -43,8 +43,9 @@ public class TableFormatter implements TableWriter
   private List<String[]> rows;
   private List<Integer> widths;
   private String colSepLeft, colSep, colSepRight;
-  private Character horizSep;
+  private char horizSep;
   private String intersectionLeft, intersection, intersectionRight;
+  private boolean separateHeader;
 
   /**
    * Construct a new formatter with the default format settings. These can be
@@ -61,6 +62,19 @@ public class TableFormatter implements TableWriter
     colSepRight = " |";
     rows = new ArrayList<String[]>();
     widths = new ArrayList<Integer>();
+    separateHeader = true;
+  }
+
+  /**
+   * Determine whether the first (header) line should be separated from the rest
+   * by a horizontal bar.
+   * 
+   * @param yes
+   *          whether or not to separate the header line
+   */
+  public void separateHeader(boolean yes)
+  {
+    separateHeader = yes;
   }
 
   /**
@@ -136,7 +150,7 @@ public class TableFormatter implements TableWriter
    * @param sep
    *          the separator character
    */
-  public void setHorizontalSeparator(Character sep)
+  public void setHorizontalSeparator(char sep)
   {
     horizSep = sep;
   }
@@ -275,7 +289,7 @@ public class TableFormatter implements TableWriter
     StringBuilder printed = new StringBuilder();
     int dataRowsStart = 0;
     appendHorizontalLine(printed);
-    if (horizSep != null)
+    if (separateHeader)
     {
       String intersect = intersectionLeft;
       appendRow(printed, 0);
