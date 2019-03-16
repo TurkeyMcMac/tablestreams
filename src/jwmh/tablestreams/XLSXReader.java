@@ -17,19 +17,19 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 import org.w3c.dom.*;
 
-public class XLSXWorkbook
+public class XLSXReader
 {
   private List<String> sharedStrings;
   private Map<String, Spreadsheet> sheets;
   private ZipFile archive;
 
-  public XLSXWorkbook(File file)
+  public XLSXReader(File file)
     throws IOException, SAXException, ParserConfigurationException
   {
     this(new ZipFile(file));
   }
 
-  public XLSXWorkbook(ZipFile file)
+  public XLSXReader(ZipFile file)
     throws IOException, SAXException, ParserConfigurationException
   {
     ZipEntry sharedStringEntry = file.getEntry("xl/sharedStrings.xml");
@@ -103,7 +103,7 @@ public class XLSXWorkbook
       rows = null;
     }
 
-    public TableReader getTable(XLSXWorkbook context)
+    public TableReader getTable(XLSXReader context)
       throws IOException, ParserConfigurationException, SAXException
     {
       if (rows == null)
@@ -114,7 +114,7 @@ public class XLSXWorkbook
     }
 
     private static List<String[]> parseTable(InputStream input,
-      XLSXWorkbook context)
+      XLSXReader context)
       throws ParserConfigurationException, SAXException, IOException
     {
       NodeList rows = null;
