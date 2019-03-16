@@ -52,10 +52,7 @@ public class XLSXTableWriter implements TableWriter, Closeable
   public void beginTable(String name) throws IOException
   {
     StringBuilder print = new StringBuilder();
-    if (writingTable)
-    {
-      finishWriting();
-    }
+    finishWriting();
     rowNum = 1;
     sheetNames.add(name);
     output.putNextEntry(
@@ -99,9 +96,12 @@ public class XLSXTableWriter implements TableWriter, Closeable
 
   public void finishWriting() throws IOException
   {
-    output.write("</sheetData></worksheet>".getBytes());
-    output.closeEntry();
-    writingTable = false;
+    if (writingTable)
+    {
+      output.write("</sheetData></worksheet>".getBytes());
+      output.closeEntry();
+      writingTable = false;
+    }
   }
 
   private void putWorkbook() throws IOException
@@ -196,10 +196,7 @@ public class XLSXTableWriter implements TableWriter, Closeable
 
   public void close() throws IOException
   {
-    if (writingTable)
-    {
-      finishWriting();
-    }
+    finishWriting();
     putWorkbook();
     putWorkbookRels();
     putRels();
