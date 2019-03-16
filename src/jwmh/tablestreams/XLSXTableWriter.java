@@ -111,9 +111,9 @@ public class XLSXTableWriter implements TableWriter, Closeable
       getColumnLetters(print, colNum);
       ++colNum;
       print.append(rowNum);
-      print.append("\"><v>");
+      print.append("\"><is><t>");
       appendEscaped(print, cell);
-      print.append("</v></c>");
+      print.append("</t></is></c>");
     }
     print.append("</row>");
     output.write(print.toString().getBytes());
