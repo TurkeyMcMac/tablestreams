@@ -62,10 +62,11 @@ public class XLSXTableWriter implements TableWriter, Closeable
         return Character.toString(original);
     }
   }
-  
+
   private static void appendEscaped(StringBuilder to, String original)
   {
-    for (int i = 0; i < original.length(); ++i) {
+    for (int i = 0; i < original.length(); ++i)
+    {
       to.append(escape(original.charAt(i)));
     }
   }
@@ -204,9 +205,14 @@ public class XLSXTableWriter implements TableWriter, Closeable
     appendHeader(print);
     print.append(
       "<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">"
-        + "<Default ContentType=\"application/xml\" Extension=\"xml\"/>"
-        + "<Default ContentType=\"application/vnd.openxmlformats-package.relationships+xml\" Extension=\"rels\"/>"
-        + "<Override ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml\" PartName=\"/xl/workbook.xml\"/>");
+        + "<Default" + " ContentType=\"application/xml\""
+        + " Extension=\"xml\"/>"
+        + "<Default"
+        + " ContentType=\"application/vnd.openxmlformats-package.relationships+xml\""
+        + " Extension=\"rels\"/>"
+        + "<Override"
+        + " ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml\""
+        + " PartName=\"/xl/workbook.xml\"/>");
     for (int i = 0; i < sheetNames.size(); ++i)
     {
       print.append("<Override"
