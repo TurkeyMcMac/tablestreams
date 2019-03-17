@@ -17,17 +17,44 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 import org.w3c.dom.*;
 
+/**
+ * An object for reading spreadsheets from an XLSX (Microsoft Excel) file.
+ * 
+ * @see XLSXTableWriter
+ * 
+ * @author Jude Melton-Houghton
+ */
 public class XLSXReader
 {
   private List<String> sharedStrings;
   private Map<String, Spreadsheet> sheets;
   private ZipFile archive;
 
+  /**
+   * Construct a new reader of a file.
+   * 
+   * @param file
+   *          the file to read
+   * @throws IOException
+   *           if the file could not be read
+   * @throws SAXException
+   *           if the file was not valid XML
+   */
   public XLSXReader(File file) throws IOException, SAXException
   {
     this(new ZipFile(file));
   }
 
+  /**
+   * Construct a new reader of a zip file.
+   * 
+   * @param file
+   *          the file to read
+   * @throws IOException
+   *           if the file could not be read
+   * @throws SAXException
+   *           if the file was not valid XML
+   */
   public XLSXReader(ZipFile file) throws IOException, SAXException
   {
     ZipEntry sharedStringEntry = file.getEntry("xl/sharedStrings.xml");
@@ -338,6 +365,18 @@ public class XLSXReader
     }
   }
 
+  /**
+   * Get a table reader of a specific spreadsheet in this file.
+   * 
+   * @param name
+   *          the name of the table
+   * @return a table reader, or {@code null} if that table is not contained
+   *         within the file
+   * @throws IOException
+   *           if a file reading error occurred
+   * @throws SAXException
+   *           if a part of the file was invalid XML
+   */
   public TableReader getTable(String name) throws IOException, SAXException
   {
     Spreadsheet sheet = sheets.get(name);

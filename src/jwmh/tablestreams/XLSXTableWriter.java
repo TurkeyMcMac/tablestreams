@@ -8,6 +8,13 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * An object for creating XLSX (Microsoft Excel) files.
+ * 
+ * @see XLSXReader
+ * 
+ * @author Jude Melton-Houghton
+ */
 public class XLSXTableWriter implements TableWriter, Closeable
 {
   private List<String> sheetNames;
@@ -15,11 +22,23 @@ public class XLSXTableWriter implements TableWriter, Closeable
   private int rowNum;
   private boolean writingTable;
 
+  /**
+   * Create a new XLSXTableWriter.
+   * 
+   * @param out
+   *          the file or other destination to which to write
+   */
   public XLSXTableWriter(OutputStream out)
   {
     this(new ZipOutputStream(out));
   }
 
+  /**
+   * Create a new XLSXTableWriter.
+   * 
+   * @param out
+   *          the file or other destination to which to write
+   */
   public XLSXTableWriter(ZipOutputStream out)
   {
     output = out;
@@ -29,7 +48,7 @@ public class XLSXTableWriter implements TableWriter, Closeable
 
   private static char columnDigitChar(int digit)
   {
-    return (char)('A' + digit - 1);
+    return (char) ('A' + digit - 1);
   }
 
   private static String getColumnLetters(int col)
@@ -77,6 +96,13 @@ public class XLSXTableWriter implements TableWriter, Closeable
     to.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
   }
 
+  /**
+   * Begin writing a new sheet to the file with some name. If the previous sheet
+   * is still open, it is closed.
+   * 
+   * @param name
+   *          the name to give the new sheet
+   */
   public void beginTable(String name) throws IOException
   {
     StringBuilder print = new StringBuilder();
@@ -100,8 +126,22 @@ public class XLSXTableWriter implements TableWriter, Closeable
     writingTable = true;
   }
 
-  public void writeRow(String... row) throws IOException
+  /**
+   * Write a row to the current spreadsheet.
+   * 
+   * @throws XLSXNotBegunException
+   *           if a spreadsheet has not been created with
+   *           {@link #beginTable(String)} yet
+   * @throws IOException
+   *           if there was an error writing to the file
+   */
+  public void writeRow(String... row) throws IOException, XLSXNotBegunException
   {
+    if (!writingTable)
+    {
+      throw new XLSXNotBegunException(
+        "Attempt to write a row without first creating a spreadsheet");
+    }
     int colNum = 0;
     StringBuilder print = new StringBuilder();
     print.append("<row r=\"");
@@ -122,6 +162,9 @@ public class XLSXTableWriter implements TableWriter, Closeable
     ++rowNum;
   }
 
+  /**
+   * Close the current sheet if it was open, that a new one might begin.
+   */
   public void finishWriting() throws IOException
   {
     if (writingTable)
@@ -227,6 +270,10 @@ public class XLSXTableWriter implements TableWriter, Closeable
     output.closeEntry();
   }
 
+  /**
+   * Close any open sheet, write internal information, and close the backing
+   * file of this writer.
+   */
   public void close() throws IOException
   {
     finishWriting();
