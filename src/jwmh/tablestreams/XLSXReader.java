@@ -90,10 +90,12 @@ public class XLSXReader
   }
 
   private static final Pattern SHEET_PATTERN =
-    Pattern.compile("^xl/worksheets/(.+)\\.xml$");
+    Pattern.compile("^xl/worksheets/sheet(\\d+)\\.xml$");
 
   private static Map<String, Spreadsheet> collectSheets(ZipFile archive)
+    throws SAXException, IOException
   {
+    Map<String, ZipEntry> entryIds = new HashMap<String, ZipEntry>();
     Map<String, Spreadsheet> sheets = new HashMap<String, Spreadsheet>();
     Enumeration<? extends ZipEntry> entries = archive.entries();
     ZipEntry sheetEntry;
@@ -103,8 +105,55 @@ public class XLSXReader
       Matcher nameMatch = SHEET_PATTERN.matcher(sheetEntry.getName());
       if (nameMatch.matches())
       {
-        String name = nameMatch.group(1);
-        sheets.put(name, new Spreadsheet(sheetEntry));
+        entryIds.put(nameMatch.group(1), sheetEntry);
+      }
+    }
+    ZipEntry workbookEntry = archive.getEntry("xl/workbook.xml");
+    if (workbookEntry == null)
+    {
+      return sheets;
+    }
+    InputStream workbook = archive.getInputStream(workbookEntry);
+    Document doc;
+    Node root, sheetsInfo;
+    NodeList sheetNodes;
+    try
+    {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder builder = factory.newDocumentBuilder();
+      doc = builder.parse(workbook);
+    }
+    catch (ParserConfigurationException e)
+    {
+      // Hopefully this never happens.
+      assert "Unreachable" == null;
+      return sheets;
+    }
+    root = doc.getDocumentElement();
+    if (root == null || root.getNodeName() != "workbook")
+    {
+      return sheets;
+    }
+    sheetsInfo = getByName(root, "sheets");
+    if (sheetsInfo == null)
+    {
+      return sheets;
+    }
+    sheetNodes = sheetsInfo.getChildNodes();
+    for (int i = 0; i < sheetNodes.getLength(); ++i)
+    {
+      Node sheetNode = sheetNodes.item(i);
+      if (sheetNode.getNodeName().equals("sheet"))
+      {
+        NamedNodeMap attrs = sheetNodes.item(i).getAttributes();
+        Node name, id;
+        ZipEntry entry;
+        if ((name = attrs.getNamedItem("name")) != null
+          && (id = attrs.getNamedItem("sheetId")) != null
+          && (entry = entryIds.get(id.getNodeValue())) != null)
+        {
+          sheets.put(name.getNodeValue(), new Spreadsheet(entry));
+        }
       }
     }
     return sheets;
