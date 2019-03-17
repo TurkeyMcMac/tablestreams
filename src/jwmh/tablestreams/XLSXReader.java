@@ -156,6 +156,7 @@ public class XLSXReader
         }
       }
     }
+    workbook.close();
     return sheets;
   }
 
