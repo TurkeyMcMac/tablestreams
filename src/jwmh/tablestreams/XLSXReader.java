@@ -23,8 +23,7 @@ public class XLSXReader
   private Map<String, Spreadsheet> sheets;
   private ZipFile archive;
 
-  public XLSXReader(File file)
-    throws IOException, SAXException, ParserConfigurationException
+  public XLSXReader(File file) throws IOException, SAXException
   {
     this(new ZipFile(file));
   }
