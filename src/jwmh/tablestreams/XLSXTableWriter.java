@@ -27,21 +27,22 @@ public class XLSXTableWriter implements TableWriter, Closeable
     writingTable = false;
   }
 
-  private void getColumnLetters(StringBuilder to, int col)
+  private static char columnDigitChar(int digit)
   {
-    if (col < 26)
+    return (char)('A' + digit - 1);
+  }
+
+  private static String getColumnLetters(int col)
+  {
+    StringBuilder letters = new StringBuilder();
+    ++col;
+    while (col >= 26)
     {
-      to.append((char) ('A' + col));
+      letters.append(columnDigitChar(col % 26));
+      col /= 26;
     }
-    else
-    {
-      do
-      {
-        to.append((char) ('A' + (col % 26)));
-        col /= 26;
-      }
-      while (col >= 26);
-    }
+    letters.append(columnDigitChar(col));
+    return letters.reverse().toString();
   }
 
   private static String escape(char original)
@@ -109,7 +110,7 @@ public class XLSXTableWriter implements TableWriter, Closeable
     for (String cell : row)
     {
       print.append("<c t=\"inlineStr\" s=\"1\" r=\"");
-      getColumnLetters(print, colNum);
+      print.append(getColumnLetters(colNum));
       ++colNum;
       print.append(rowNum);
       print.append("\"><is><t>");
