@@ -1,5 +1,8 @@
 # tablestreams
-tablestreams is a tool for streaming tables in and out of a program. The interface is generic across multiple table formats, and so can also be used to convert between them. Currently supported are TSV, CSV, and DSV (CSV with delimiters other than commas). I hope to add more in the future.
+tablestreams is a tool for streaming tables in and out of a program. The
+interface is generic across multiple table formats, and so can also be used to
+convert between them. Currently supported are TSV, CSV, DSV (CSV with delimiters
+other than commas), and (buggy) XLSX.
 
 #### Examples
 Here, a table is read from the TSV format to a CSV format:
