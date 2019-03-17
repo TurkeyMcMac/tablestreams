@@ -29,15 +29,21 @@ public class XLSXReader
     this(new ZipFile(file));
   }
 
-  public XLSXReader(ZipFile file)
-    throws IOException, SAXException, ParserConfigurationException
+  public XLSXReader(ZipFile file) throws IOException, SAXException
   {
     ZipEntry sharedStringEntry = file.getEntry("xl/sharedStrings.xml");
     archive = file;
     if (sharedStringEntry != null)
     {
-      sharedStrings =
-        parseSharedStrings(file.getInputStream(sharedStringEntry));
+      try
+      {
+        sharedStrings =
+          parseSharedStrings(file.getInputStream(sharedStringEntry));
+      }
+      catch (ParserConfigurationException e)
+      {
+        assert "Unreachable" == null;
+      }
     }
     sheets = collectSheets(file);
   }
@@ -333,13 +339,19 @@ public class XLSXReader
     }
   }
 
-  public TableReader getTable(String name)
-    throws IOException, ParserConfigurationException, SAXException
+  public TableReader getTable(String name) throws IOException, SAXException
   {
     Spreadsheet sheet = sheets.get(name);
     if (sheet != null)
     {
-      return sheet.getTable(this);
+      try
+      {
+        return sheet.getTable(this);
+      }
+      catch (ParserConfigurationException e)
+      {
+        assert "Unreachable" == null;
+      }
     }
     return null;
   }
