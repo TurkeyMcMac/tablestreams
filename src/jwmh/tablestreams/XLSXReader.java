@@ -281,7 +281,7 @@ public class XLSXReader
       {
         Node cell = cells.item(i);
         Node typeNode = cell.getAttributes().getNamedItem("t");
-        String type = typeNode != null ? typeNode.getNodeValue() : null;
+        String type = typeNode != null ? typeNode.getNodeValue() : "";
         if (cell.getNodeName().equals("c"))
         {
           Node valueNode;
