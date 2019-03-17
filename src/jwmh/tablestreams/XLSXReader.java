@@ -1,5 +1,6 @@
 package jwmh.tablestreams;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +25,7 @@ import org.w3c.dom.*;
  * 
  * @author Jude Melton-Houghton
  */
-public class XLSXReader
+public class XLSXReader implements Closeable
 {
   private List<String> sharedStrings;
   private Map<String, Spreadsheet> sheets;
@@ -392,5 +393,13 @@ public class XLSXReader
       }
     }
     return null;
+  }
+
+  /**
+   * Close the backing ZIP archive.
+   */
+  public void close() throws IOException
+  {
+    archive.close();
   }
 }

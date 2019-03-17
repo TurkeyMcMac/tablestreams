@@ -1,6 +1,7 @@
 package jwmh.tablestreams;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
  * @see <a href="https://tools.ietf.org/html/rfc4180">The CSV specification</a>
  *      (DSV where the delimiter is ',')
  */
-public class DSVTableReader implements TableReader
+public class DSVTableReader implements TableReader, Closeable
 {
   private BufferedReader source;
   private char delim;
@@ -149,6 +150,11 @@ public class DSVTableReader implements TableReader
   {
     return cell.replace("\\" + delim, Character.toString(delim))
       .replace("\\\"", "\"").replace("\\\\", "\\");
+  }
+
+  public void close() throws IOException
+  {
+    source.close();
   }
 
 }

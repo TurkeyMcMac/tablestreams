@@ -1,5 +1,6 @@
 package jwmh.tablestreams;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ import java.util.List;
  * @author Jude Melton-Houghton
  *
  */
-public class TableFormatter implements TableWriter
+public class TableFormatter implements TableWriter, Closeable
 {
   private OutputStream output;
   private List<String[]> rows;
@@ -344,6 +345,17 @@ public class TableFormatter implements TableWriter
     if (output != null)
     {
       output.write(toString().getBytes());
+    }
+  }
+
+  /**
+   * Close the resource associated with this formatter if there is one.
+   */
+  public void close() throws IOException
+  {
+    if (output != null)
+    {
+      output.close();
     }
   }
 }

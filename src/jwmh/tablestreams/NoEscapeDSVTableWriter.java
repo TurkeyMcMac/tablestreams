@@ -1,5 +1,6 @@
 package jwmh.tablestreams;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -13,7 +14,7 @@ import java.io.PrintStream;
  * @author Jude Melton-Houghton
  * @see NoEscapeDSVTableReader
  */
-public class NoEscapeDSVTableWriter implements TableWriter
+public class NoEscapeDSVTableWriter implements TableWriter, Closeable
 {
   private OutputStream dest;
   private boolean started;
@@ -29,7 +30,8 @@ public class NoEscapeDSVTableWriter implements TableWriter
    * @param rowDelim
    *          the row delimiter character (a newline for TSV)
    */
-  public NoEscapeDSVTableWriter(OutputStream dest, char cellDelim, char rowDelim)
+  public NoEscapeDSVTableWriter(OutputStream dest, char cellDelim,
+    char rowDelim)
   {
     this.dest = dest;
     this.started = false;
@@ -55,8 +57,11 @@ public class NoEscapeDSVTableWriter implements TableWriter
       dest.write(rowDelim);
     }
     started = true;
-    dest.write(
-      String.join(Character.toString(cellDelim), cells).getBytes());
+    dest.write(String.join(Character.toString(cellDelim), cells).getBytes());
   }
 
+  public void close() throws IOException
+  {
+    dest.close();
+  }
 }

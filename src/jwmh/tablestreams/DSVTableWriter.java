@@ -1,5 +1,6 @@
 package jwmh.tablestreams;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -11,7 +12,7 @@ import java.io.OutputStream;
  * @see <a href="https://tools.ietf.org/html/rfc4180">The CSV specification</a>
  *      (DSV where the delimiter is ',')
  */
-public class DSVTableWriter implements TableWriter
+public class DSVTableWriter implements TableWriter, Closeable
 {
 
   OutputStream dest;
@@ -57,4 +58,8 @@ public class DSVTableWriter implements TableWriter
     }
   }
 
+  public void close() throws IOException
+  {
+    dest.close();
+  }
 }

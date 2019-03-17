@@ -1,6 +1,7 @@
 package jwmh.tablestreams;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,7 +17,7 @@ import java.util.Scanner;
  * @author Jude Melton-Houghton
  * @see NoEscapeDSVTableWriter
  */
-public class NoEscapeDSVTableReader implements TableReader
+public class NoEscapeDSVTableReader implements TableReader, Closeable
 {
   private Scanner source;
   private String cellDelim;
@@ -51,4 +52,8 @@ public class NoEscapeDSVTableReader implements TableReader
     }
   }
 
+  public void close() throws IOException
+  {
+    source.close();
+  }
 }
