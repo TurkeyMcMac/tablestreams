@@ -1,5 +1,6 @@
 package jwmh.tablestreams;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
@@ -8,7 +9,7 @@ import java.io.IOException;
  * 
  * @author Jude Melton-Houghton
  */
-public class StrictColumnTableReader implements TableReader
+public class StrictColumnTableReader implements TableReader, Closeable
 {
   private TableReader source;
   private int columnCount;
@@ -66,4 +67,14 @@ public class StrictColumnTableReader implements TableReader
     return row;
   }
 
+  /**
+   * Close the backing table if it needs to be closed.
+   */
+  public void close() throws IOException
+  {
+    if (source instanceof Closeable)
+    {
+      ((Closeable) source).close();
+    }
+  }
 }
