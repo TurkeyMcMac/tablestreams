@@ -42,6 +42,20 @@ public class XLSXReader
     sheets = collectSheets(file);
   }
 
+  private static Node getByName(Node parent, String name)
+  {
+    NodeList children = parent.getChildNodes();
+    for (int i = 0; i < children.getLength(); ++i)
+    {
+      Node child = children.item(i);
+      if (child.getNodeName().equals(name))
+      {
+        return child;
+      }
+    }
+    return null;
+  }
+
   private static List<String> parseSharedStrings(InputStream inputStream)
     throws IOException, SAXException, ParserConfigurationException
   {
@@ -60,10 +74,14 @@ public class XLSXReader
       Node si = sis.item(i);
       if (si.getNodeName() == "si")
       {
-        Node value = si.getFirstChild();
-        if (value.getNodeName() == "t")
+        Node value = getByName(si, "t");
+        if (value != null)
         {
           strings.add(value.getTextContent());
+        }
+        else
+        {
+          strings.add(si.getTextContent());
         }
       }
     }
@@ -180,24 +198,43 @@ public class XLSXReader
       for (int i = 0; i < cells.getLength(); ++i)
       {
         Node cell = cells.item(i);
+        Node typeNode = cell.getAttributes().getNamedItem("t");
+        String type = typeNode != null ? typeNode.getNodeValue() : null;
         if (cell.getNodeName().equals("c"))
         {
-          Node value = cell.getFirstChild();
-          if (value.getNodeName().equals("v"))
+          Node valueNode;
+          String value = "";
+          switch (type)
           {
-            String rawValue = value.getTextContent();
-            String realValue;
-            Node type = cell.getAttributes().getNamedItem("t");
-            if (type != null && type.getNodeValue().equals("s"))
-            {
-              realValue = sharedStrings.get(Integer.parseInt(rawValue));
-            }
-            else
-            {
-              realValue = rawValue;
-            }
-            parsedRow.add(realValue);
+            case "s":
+              valueNode = getByName(cell, "v");
+              if (valueNode != null)
+              {
+                value =
+                  sharedStrings
+                    .get(Integer.parseInt(valueNode.getTextContent()));
+              }
+              break;
+            case "inlineStr":
+              valueNode = getByName(cell, "is");
+              if (valueNode != null)
+              {
+                valueNode = getByName(valueNode, "t");
+                if (valueNode != null)
+                {
+                  value = valueNode.getTextContent();
+                }
+              }
+              break;
+            default:
+              valueNode = getByName(cell, "v");
+              if (valueNode != null)
+              {
+                value = valueNode.getTextContent();
+              }
+              break;
           }
+          parsedRow.add(value);
         }
       }
       rowArray = new String[parsedRow.size()];
