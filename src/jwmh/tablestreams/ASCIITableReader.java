@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 /**
  * A reader which uses ASCII character 31 "INFORMATION SEPARATOR ONE" to
@@ -18,9 +17,6 @@ import java.util.regex.Pattern;
  */
 public class ASCIITableReader extends NoEscapeDSVTableReader
 {
-  private static final Pattern ROW_DELIMITER = Pattern.compile("\u001E");
-  private static final Pattern CELL_DELIMITER = Pattern.compile("\u001F");
-
   /**
    * Instantiate from an input stream.
    * 
@@ -62,16 +58,6 @@ public class ASCIITableReader extends NoEscapeDSVTableReader
    */
   public ASCIITableReader(Scanner source)
   {
-    super(source);
-  }
-
-  protected Pattern getCellDelimiterPattern()
-  {
-    return CELL_DELIMITER;
-  }
-
-  protected Pattern getRowDelimiterPattern()
-  {
-    return ROW_DELIMITER;
+    super(source, '\u001F', '\u001E');
   }
 }

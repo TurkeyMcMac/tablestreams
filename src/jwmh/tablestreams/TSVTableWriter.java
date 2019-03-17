@@ -9,7 +9,9 @@ import java.io.PrintStream;
  * A writer of Tab-Separated Values.
  * 
  * @author Jude Melton-Houghton
- * @see <a href="https://www.iana.org/assignments/media-types/text/tab-separated-values">The TSV specification.</a>
+ * @see <a href=
+ *      "https://www.iana.org/assignments/media-types/text/tab-separated-values">The
+ *      TSV specification.</a>
  * @see TSVTableReader
  */
 public class TSVTableWriter extends NoEscapeDSVTableWriter
@@ -22,17 +24,6 @@ public class TSVTableWriter extends NoEscapeDSVTableWriter
    */
   public TSVTableWriter(OutputStream dest)
   {
-    super(dest);
+    super(dest, '\t', '\n');
   }
-
-  protected char getCellDelimiter()
-  {
-    return '\t';
-  }
-
-  protected char getRowDelimiter()
-  {
-    return '\n';
-  }
-
 }

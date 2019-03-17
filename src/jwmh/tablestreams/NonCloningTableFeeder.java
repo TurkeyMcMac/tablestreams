@@ -3,13 +3,13 @@ package jwmh.tablestreams;
 import java.util.List;
 
 /**
- * A reader which reads rows from an internal list one by one. Each row is
- * cloned when it is read with readRow.
+ * A reader which reads rows from an internal list one by one. Each row upon
+ * reading is the same array as was provided upon instantiation .
  * 
  * @author Jude Melton-Houghton
  * @see TableCollector
  */
-public class TableFeeder implements TableReader
+public class NonCloningTableFeeder implements TableReader
 {
 
   private List<String[]> source;
@@ -21,7 +21,7 @@ public class TableFeeder implements TableReader
    * @param source
    *          the backing list
    */
-  public TableFeeder(List<String[]> source)
+  public NonCloningTableFeeder(List<String[]> source)
   {
     this.source = source;
   }
@@ -32,11 +32,7 @@ public class TableFeeder implements TableReader
     if (reading < source.size())
     {
       row = source.get(reading);
-      if (row != null)
-      {
-        row = row.clone();
-      }
-      else
+      if (row == null)
       {
         row = new String[0];
       }

@@ -44,4 +44,16 @@ public interface TableWriter
       writeRow(row);
     }
   }
+
+  /**
+   * Finish writing the current table. This shall not close the backing
+   * resource. It may or may not do anything at all. However, it is good to call
+   * in a generic context.
+   * 
+   * @throws IOException
+   */
+  public default void finishWriting() throws IOException
+  {
+    // Do nothing.
+  }
 }
